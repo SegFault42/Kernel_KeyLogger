@@ -1,16 +1,32 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/interrupt.h>
+#include <asm/io.h>
+
+#include "./misc.h"
+
+#define KBD_IRQ             1       /* IRQ number for keyboard (i8042) */
+#define KBD_DATA_REG        0x60    /* I/O port for keyboard data */
+#define KBD_SCANCODE_MASK   0x7f
+#define KBD_STATUS_MASK     0x80
+
 typedef struct			s_key
 {
 	unsigned char		key;		// Key code
 	unsigned char		state;		// 1 Presed, 0 Released
 	char				name[25];	// Key name
 	struct tm			time;		// time
-	struct keyboard_s	*next;		// next
+	struct s_key		*next;		// next
 }						t_key;
 
-static const unsigned char	*key_name[] = {
+void	*add_tail(unsigned char scancode);
+void	print_nb_elem_lst(void);
+void	free_lst(void);
+
+static const unsigned char	*key_name[128] = {
 	0, // undefined
 	"escape", // escape
 	"1","2","3","4","5","6","7","8","9","0","-","=",
@@ -55,9 +71,49 @@ static const unsigned char	*key_name[] = {
 	"",		// ?
 	"",		// ?
 	"F11",		// <F11>
-	"F12"		// <F12>
+	"F12",		// <F12>
+	"",		// ?
+	"",		// ?
+	"super",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	"",		// ?
+	""		// ?
 };
-static const unsigned char	keyboard_map[] = {
+
+static const unsigned char	keyboard_map[128] = {
 	0, // undefined
 	0, // escape
 	'1','2','3','4','5','6','7','8','9','0','-','=',
