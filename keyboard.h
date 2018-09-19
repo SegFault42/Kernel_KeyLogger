@@ -5,25 +5,27 @@
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <asm/io.h>
+#include <linux/time.h>
 
 #include "./misc.h"
 
-#define KBD_IRQ             1       /* IRQ number for keyboard (i8042) */
-#define KBD_DATA_REG        0x60    /* I/O port for keyboard data */
-#define KBD_SCANCODE_MASK   0x7f
-#define KBD_STATUS_MASK     0x80
+#define KBD_IRQ				0x01	/* IRQ number for keyboard (i8042) */
+#define KBD_DATA_REG		0x60	/* I/O port for keyboard data */
+#define KBD_SCANCODE_MASK	0x7f
+#define KBD_STATUS_MASK		0x80
+
+#define BUFF_SIZE			32
 
 typedef struct			s_key
 {
 	unsigned char		key;		// Key code
 	unsigned char		state;		// 1 Presed, 0 Released
-	char				name[25];	// Key name
-	struct tm			time;		// time
+	char				name[15];	// Key name
+	struct timespec		time;		// time
 	struct s_key		*next;		// next
 }						t_key;
 
 void	*add_tail(unsigned char scancode);
-void	print_nb_elem_lst(void);
 void	free_lst(void);
 
 static const unsigned char	*key_name[128] = {
