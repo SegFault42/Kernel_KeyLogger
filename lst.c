@@ -2,14 +2,17 @@
 
 t_key	*first = NULL;
 
-void	*add_tail(unsigned char scancode)
+void	add_tail(unsigned char scancode)
 {
 	t_key	*idx = first;
 	t_key	*new_node = NULL;
 
 	// create new node
 	new_node = (t_key *)kcalloc(1, sizeof(t_key), GFP_KERNEL);
-	if (new_node == NULL) { return NULL; }
+	if (new_node == NULL) {
+		pr_info("Malloc failure\n");
+ 		return ;
+	}
 
 	// init all field
 	new_node->key = scancode & KBD_SCANCODE_MASK;

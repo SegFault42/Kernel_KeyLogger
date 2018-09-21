@@ -30,7 +30,7 @@ typedef struct			s_key
 	struct s_key		*next;		// next
 }						t_key;
 
-void	*add_tail(unsigned char scancode);
+void	add_tail(unsigned char scancode);
 void	free_lst(void);
 
 // array for explicit name key
@@ -83,6 +83,7 @@ static const unsigned char	*key_name[128] = {
 	"","","","","","","","","","","","","","","","","","","","","","","","","",
 	"","","","","","","","","","",""
 };
+
 // array for key
 static const unsigned char	keyboard_map[2][128] = {
 	{

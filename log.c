@@ -20,7 +20,7 @@ void	print_log(void)
 
 	while (tmp != NULL) {
 		// check if shift is pressed
-		if (tmp->key == 42)
+		if (tmp->key == 42 || tmp->key == 54)
 			shift = tmp->state;
 		// check if key is mapped, pressed and writable
 		if (keyboard_map[MIN][tmp->key] && tmp->state && tmp->key <= 57) {

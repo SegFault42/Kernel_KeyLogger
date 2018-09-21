@@ -4,7 +4,10 @@ static int		misc_open(struct inode *inode, struct file *filp);
 static int		misc_release(struct inode *inode, struct file *filp);
 static ssize_t	misc_read(struct file *filp, char *buffer, size_t length, loff_t *offset);
 
+
+extern t_key	*first;
 static struct miscdevice		misc_device;
+
 const struct file_operations	f_ops = {
 	.owner = THIS_MODULE,
 	.open = misc_open,
@@ -12,7 +15,6 @@ const struct file_operations	f_ops = {
 	.read = misc_read,
 };
 
-extern t_key	*first;
 
 static int	misc_open(struct inode *inode, struct file *filp)
 {
@@ -35,7 +37,7 @@ static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t
 
 	// browse the list, convert elem in formated string and store it in a buffer
 	while (tmp) {
-		sprintf(buff, "%.2lu:%.2lu:%.2lu, %12s, (%02d), %s\n",
+		sprintf(buff, "%.2lu:%.2lu:%.2lu, %12s, (%02d), %8s\n",
 				(tmp->time.tv_sec / 3600) % (24), (tmp->time.tv_sec / 60) % (60),
 				tmp->time.tv_sec % 60, tmp->name, tmp->key, tmp->state ? "pressed" : "released");
 
@@ -49,7 +51,7 @@ static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t
 		if (log == NULL)
 			return -1;
 
-		// concat to large buffer
+		// concat into large buffer
 		log = strcat(log, buff);
 
 		tmp = tmp->next;
