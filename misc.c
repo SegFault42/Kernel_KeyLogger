@@ -4,8 +4,8 @@ static int		misc_open(struct inode *inode, struct file *filp);
 static int		misc_release(struct inode *inode, struct file *filp);
 static ssize_t	misc_read(struct file *filp, char *buffer, size_t length, loff_t *offset);
 
-
-extern t_key	*first;
+extern t_key					*first;
+extern struct mutex				lock;
 static struct miscdevice		misc_device;
 
 const struct file_operations	f_ops = {
@@ -14,7 +14,6 @@ const struct file_operations	f_ops = {
 	.release = misc_release,
 	.read = misc_read,
 };
-
 
 static int	misc_open(struct inode *inode, struct file *filp)
 {
@@ -34,6 +33,9 @@ static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t
 	char	*log = NULL;
 	char	buff[128] = {0};
 	size_t	len	= 0;
+
+	// lock
+	mutex_lock(&lock);
 
 	// browse the list, convert elem in formated string and store it in a buffer
 	while (tmp) {
@@ -62,6 +64,9 @@ static ssize_t		misc_read(struct file *filp, char *buffer, size_t length, loff_t
 		len = simple_read_from_buffer(buffer, length, offset, log, strlen(log));
 		kfree(log);
 	}
+
+	// Unlock
+	mutex_unlock(&lock);
 
 	return len;
 }

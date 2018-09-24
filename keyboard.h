@@ -7,6 +7,7 @@
 #include <linux/time.h>
 #include <linux/time.h>
 #include <asm/io.h>
+#include <linux/mutex.h>
 
 #include "./misc.h"
 #include "./log.h"
