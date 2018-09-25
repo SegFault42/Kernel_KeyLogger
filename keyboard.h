@@ -9,8 +9,9 @@
 #include <asm/io.h>
 #include <linux/mutex.h>
 
-#include "./misc.h"
-#include "./log.h"
+#include "misc.h"
+#include "log.h"
+//#include "./file.h"
 
 #define KBD_IRQ				0x01	/* IRQ number for keyboard (i8042) */
 #define KBD_DATA_REG		0x60	/* I/O port for keyboard data */

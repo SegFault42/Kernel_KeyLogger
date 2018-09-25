@@ -1,5 +1,6 @@
 #include "./keyboard.h"
 
+// pointer to the first elem in linked list
 t_key	*first = NULL;
 
 void	add_tail(unsigned char scancode)
@@ -37,10 +38,10 @@ void	free_lst(void)
 	t_key	*idx = first;
 	t_key	*tmp = idx;
 
-	while (idx != NULL)
-	{
+	while (idx != NULL) {
 		tmp = idx;
 		idx = idx->next;
 		kfree(tmp);
+		tmp = NULL;
 	}
 }
