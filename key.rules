@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="usb", RUN+="/home/segfault42/Documents/42_drivers_and_interrupts/add.sh"
+#ACTION=="remove", SUBSYSTEM=="block", KERNEL=="sd[a-z]1", ATTRS{vendor}=="0x8086", RUN+="/home/segfault42/Documents/42_little_penguin/ex04/remove.sh"
